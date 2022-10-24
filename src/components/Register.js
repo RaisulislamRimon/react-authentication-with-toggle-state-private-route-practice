@@ -28,7 +28,7 @@ const Register = () => {
         toast.success("Name updated successfully");
       })
       .catch((error) => {
-        toast.error(error.message);
+        toast.error(error.code);
       });
   };
 
