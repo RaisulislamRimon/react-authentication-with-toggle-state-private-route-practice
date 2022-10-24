@@ -4,6 +4,7 @@ import app from "../firebase/firebase.config";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
 import { toast } from "react-toastify";
@@ -23,12 +24,26 @@ const Register = () => {
           displayName: name,
         });
         toast.success("Registration Successful");
+        emailVerify();
       })
       .then(() => {
         toast.success("Name updated successfully");
       })
       .catch((error) => {
         toast.error(error.code);
+      });
+  };
+
+  const emailVerify = () => {
+    // email verification
+    sendEmailVerification(auth.currentUser)
+      .then(() => {
+        toast.success(
+          "Email Verification sent, please check your email & verify."
+        );
+      })
+      .catch((error) => {
+        toast.error(error.message);
       });
   };
 
