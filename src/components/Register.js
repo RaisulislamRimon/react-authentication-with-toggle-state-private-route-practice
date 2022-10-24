@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import app from "../firebase/firebase.config";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  GoogleAuthProvider,
   sendEmailVerification,
+  signInWithPopup,
   updateProfile,
 } from "firebase/auth";
 import { toast } from "react-toastify";
+import { AuthContext } from "../contexts/UserContext";
+
+const auth = getAuth(app);
+
+const googleProvider = new GoogleAuthProvider();
 
 const Register = () => {
-  const auth = getAuth(app);
+  const { createUser, updateName, verifyEmail } = useContext(AuthContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,37 +25,55 @@ const Register = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((result) => {
-        updateProfile(auth.currentUser, {
-          displayName: name,
-        });
+    createUser(email, password)
+      .then(() => {
         toast.success("Registration Successful");
-        emailVerify();
+        updateName(name)
+        .then(() => {
+          toast.success("Name updated successfully");
+        })
+        
       })
       .then(() => {
-        toast.success("Name updated successfully");
       })
       .catch((error) => {
         toast.error(error.code);
       });
   };
 
-  const emailVerify = () => {
-    // email verification
-    sendEmailVerification(auth.currentUser)
-      .then(() => {
-        toast.success(
-          "Email Verification sent, please check your email & verify."
-        );
-      })
-      .catch((error) => {
-        toast.error(error.message);
-      });
-  };
+  // const emailVerify = () => {
+  //   // email verification
+  //   sendEmailVerification(auth.currentUser)
+  //     .then(() => {
+  //       toast.success(
+  //         "Email Verification sent, please check your email & verify."
+  //       );
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.message);
+  //     });
+  // };
 
   const handleGoogleSignIn = () => {
-    console.log("handleGoogleSignIn");
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
   };
 
   return (
