@@ -1,22 +1,35 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ErrorPage from "./components/ErrorPage";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import Main from "./layout/Main";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Home />,
-    },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/register",
-      element: <Register />,
+      element: <Main />,
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "/home",
+          element: <Home />,
+        },
+        {
+          path: "/login",
+          element: <Login />,
+        },
+        {
+          path: "/register",
+          element: <Register />,
+        },
+      ],
     },
   ]);
   return (
