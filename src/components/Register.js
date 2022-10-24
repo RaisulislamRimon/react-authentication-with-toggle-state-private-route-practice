@@ -1,14 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import app from "../firebase/firebase.config";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from "firebase/auth";
+import { toast } from "react-toastify";
 
 const Register = () => {
+  const auth = getAuth(app);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    console.log(name, email, password);
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((result) => {
+        updateProfile(auth.currentUser, {
+          displayName: name,
+        });
+        toast.success("Registration Successful");
+      })
+      .then(() => {
+        toast.success("Name updated successfully");
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
+
   return (
     <div className="flex justify-center items-center pt-8">
       <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900">
