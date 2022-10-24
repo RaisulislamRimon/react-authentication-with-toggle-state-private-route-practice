@@ -1,11 +1,22 @@
-import React from 'react'
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./components/Home";
 
 function App() {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Home />,
+    },
+  ]);
   return (
-    <div className='flex justify-center items-center min-h-screen'>
-      <h1 className='text-3xl'>Welcome to Authentech</h1>
-    </div>
-  )
+    <>
+      <RouterProvider router={router} />
+      <div className="flex justify-center items-center min-h-screen">
+        <h1 className="text-3xl">Welcome to Authentech</h1>
+      </div>
+    </>
+  );
 }
 
-export default App
+export default App;
